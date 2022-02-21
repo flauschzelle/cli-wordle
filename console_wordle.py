@@ -30,12 +30,19 @@ def bold_colored_text(text: str, color: str) -> str:
 
 def color_code_hints(text: str, pattern: str) -> str:
 	ctext = ""
+	hidden = []
+
+	for i in range (len(pattern)):
+		if text[i] != pattern[i]:
+			hidden.append(pattern[i])
+
 	for i in range (len(pattern)):
 		if text[i] == pattern[i]:
 			ctext += bold_colored_text(text[i], BGREEN)
-		elif text[i] in pattern:
+		elif text[i] in hidden:
 			ctext += bold_colored_text(text[i], BYELLOW)
-		else :
+			hidden.remove(text[i])
+		else:
 			ctext += bold_colored_text(text[i], BGRAY)
 	return ctext
 
