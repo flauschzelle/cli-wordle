@@ -25,6 +25,17 @@ print("Can you guess the secret", word_len, "letter word in", max_guesses, "or l
 def bold_colored_text(text: str, color: str) -> str:
 	ctext = f"{BOLD}{color}{text}{ENDC}"
 	return ctext
+
+def color_code_hints(text: str, pattern: str) -> str:
+	ctext = ""
+	for i in range (len(pattern)):
+		if text[i] == pattern[i]:
+			ctext += bold_colored_text(text[i], BGREEN)
+		elif text[i] in pattern:
+			ctext += bold_colored_text(text[i], BYELLOW)
+		else :
+			ctext += bold_colored_text(text[i], BGRAY)
+	return ctext
 	
 while guesses < max_guesses:
 
@@ -34,10 +45,16 @@ while guesses < max_guesses:
 	print("\x1B[F\x1B[2K", end="") # overwrite input line after entering
 
 	if len(guess) < word_len:
-		print(f"      {guess} is too short. Words must be {word_len} letters long!")
+		print(f"      {guess} is too short.",
+			 f"Words must be {word_len} letters long!")
 		continue
 
-	print(bold_colored_text(guess, BGREEN))
+	if not guess.isalpha():
+		print(f"      {guess} contains invalid characters.",
+			 "Only letters are allowed!")
+		continue
+
+	print(color_code_hints(guess, solution))
 
 	guesses += 1
 	
