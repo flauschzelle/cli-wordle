@@ -3,12 +3,35 @@
 # A wordle implementation for unix terminals. 
 # This will probably not work correctly on Windows, sorry!
 
-solution = "WORDL"
+
+# some parameters and defaults:
+
 word_len = 5
+max_guesses = word_len + (word_len//4)
 guesses = 0
-max_guesses = 6
 guessed = []
 message = "Type a word and press ENTER to guess!"
+message_lines = 3
+lines = max_guesses + message_lines
+
+# load the list of allowed words to guess:
+def load_words(word_len) -> list:
+	filename = "words" + str(word_len) + ".txt"
+	file = open(filename, "r")
+	words = []
+	while(True):
+		line = file.readline()
+		if not line:
+			break
+		words.append(line.strip().upper())
+	file.close()
+	return words
+
+all_words = load_words(word_len)
+
+solution = "WORLD"
+
+# some colors etc for output formatting:
 
 BGREEN = '\033[42m'
 BYELLOW = '\033[43m'
@@ -21,8 +44,7 @@ WHITE = '\033[37m'
 ENDC = '\033[0m'
 BOLD = '\033[1m'
 
-print("\n Welcome to CONSOLE WORDLE!")
-print(" Can you guess the secret", word_len, "letter word in", max_guesses, "or less tries?\n")
+# helpful functions:
 
 def bold_colored_text(text: str, color: str) -> str:
 	ctext = f"{BOLD}{color} {text} {ENDC}"
@@ -53,12 +75,19 @@ def display_guesses(from_line: int):
 		else:
 			print(f" {BBLACK}{' '*3*word_len}{ENDC}")
 
+# the actual game starts here:
+
+print("\n Welcome to CONSOLE WORDLE!")
+print(" Guess the secret", word_len, "letter word in", max_guesses, "or less tries!\n")
+
 # start with showing the empty grid:
+
 display_guesses(0)
 print(f"\n {message}\n")
 
-# set the cursor to start the input on the first empty grid line:
-print("\x1B[9F\x1B[2K", end="")
+# start input on the first empty grid line:
+
+print(f"\x1B[{str(lines)}F\x1B[2K", end="")
 
 while guesses < max_guesses:
 
@@ -69,7 +98,7 @@ while guesses < max_guesses:
 
 	current_line = guesses
 
-	if guess.isalpha() and len(guess) == word_len:
+	if len(guess) == word_len and (guess in all_words):
 		message = "Type a word and press ENTER to guess!"
 		guesses += 1
 		guessed.append(guess)
@@ -79,8 +108,7 @@ while guesses < max_guesses:
 	display_guesses(current_line)
 	
 	if guess == solution:
-		print("\n You found the secret word",
-			f"in {guesses}/{max_guesses} tries :)\n")
+		print(f"\n Solved in {guesses}/{max_guesses} tries :)\n")
 		break
 
 	if guesses >= max_guesses:
@@ -90,5 +118,5 @@ while guesses < max_guesses:
 	print(f"\n {message}\n")
 
 	# set the cursor to start the input on the next empty line:
-	print(f"\x1B[{str(9-guesses)}F\x1B[2K", end="")
+	print(f"\x1B[{str(lines-guesses)}F\x1B[2K", end="")
 
