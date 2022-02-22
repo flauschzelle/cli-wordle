@@ -3,6 +3,7 @@
 # A wordle implementation for unix terminals. 
 # This will probably not work correctly on Windows, sorry!
 
+import random
 
 # some parameters and defaults:
 
@@ -29,7 +30,10 @@ def load_words(word_len) -> list:
 
 all_words = load_words(word_len)
 
-solution = "WORLD"
+# choose a random word from the word list as the solution:
+
+pick_number = random.randint(0, len(all_words))
+solution = all_words[pick_number]
 
 # some colors etc for output formatting:
 
@@ -120,3 +124,4 @@ while guesses < max_guesses:
 	# set the cursor to start the input on the next empty line:
 	print(f"\x1B[{str(lines-guesses)}F\x1B[2K", end="")
 
+print(f" Random word number {pick_number} of {len(all_words)}")
