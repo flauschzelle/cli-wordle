@@ -46,8 +46,12 @@ BYELLOW = '\033[43m'
 BBLACK = '\033[40m'
 BGRAY = '\033[100m' 
 
-BLACK = '\033[30m'
-WHITE = '\033[37m'
+# BLACK = '\033[30m'
+# WHITE = '\033[37m'
+GRAY = '\033[90m'
+GREEN = '\033[32m'
+YELLOW = '\033[33m'
+
 
 ENDC = '\033[0m'
 BOLD = '\033[1m'
@@ -79,6 +83,32 @@ def color_code_hints(text: str, pattern: str) -> str:
 	return ctext
 
 
+def color_code_input(letter: str, place: int, pattern: str, prev_lines: list) -> str:
+
+	hint_color: str = ""
+
+	for li in prev_lines:
+		if letter not in li:
+			# no hints for this letter
+			continue
+		elif letter in li and letter not in pattern:
+			hint_color = GRAY
+			break
+		elif li[place-1] == letter and pattern[place-1] == letter:
+			hint_color = GREEN
+			break
+		elif letter in li and letter in pattern:
+			hint_color = YELLOW
+			# next line might still have a green hint
+			continue
+
+	if hint_color == "":
+		text = f"{BOLD}{letter}{ENDC}"
+	else:
+		text = f"{BOLD}{hint_color}{letter}{ENDC}"
+	return text
+
+
 def display_guesses(from_line: int):
 	for i in range (from_line, max_guesses):
 		if i < guesses:
@@ -87,10 +117,11 @@ def display_guesses(from_line: int):
 			print(f" {BBLACK}{' '*3*word_len}{ENDC}")
 
 
-def display_input_char(ch: str):
+def display_input_char(ch: str, place: int):
 	# letters:
 	if ch.isalpha():
-		print(f" {ch.upper()} ", end="", flush=True)
+		letter: str = color_code_input(ch.upper(), place, solution, guessed)
+		print(f" {letter} ", end="", flush=True)
 	# delete / backspace:
 	elif ch == '\x7f':
 		print("\b\b\b\x1B[0K", end="", flush=True)
@@ -123,7 +154,7 @@ while guesses < max_guesses:
 		if len(current_input) == 0:
 			if c.isalpha():
 				current_input += c
-				display_input_char(c)
+				display_input_char(c, len(current_input))
 			elif c == '\x7f' or c == '\n':
 				continue
 			else:
@@ -139,13 +170,13 @@ while guesses < max_guesses:
 				continue
 			else:
 				break
-			display_input_char(c)
+			display_input_char(c, len(current_input))
 
 		# in a full line, only backspace or enter is allowed:
 		elif len(current_input) == word_len:
 			if c == '\x7f':
 				current_input = current_input[0:-1]
-				display_input_char(c)
+				display_input_char(c, len(current_input))
 			elif c.isalpha():
 				continue
 			elif c == '\n':
