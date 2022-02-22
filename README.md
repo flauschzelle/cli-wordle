@@ -16,7 +16,7 @@ Obviously, you need to have **Python 3** installed.
 
 In addition to the files in this repo, you need a source for the **word list** to choose words from. I didn't include a word list in here to keep it from bloating the size of this repo.
 
-So far, I've used `words_alpha.txt` from [this source](https://github.com/dwyl/english-words/). It contains a lot of obscure words I've never seen before, so if you know a better one (maybe sorted by frequency), feel free to let me know :)
+So far, I've used [words_alpha.txt](https://github.com/dwyl/english-words/raw/master/words_alpha.txt) from [this repo](https://github.com/dwyl/english-words/). It contains a lot of obscure words I've never seen before, so if you know a better one (maybe sorted by frequency), feel free to let me know :)
 
 After cloning this repo and downloading a word list source file (just put it in the same folder and name it `words_alpha.txt`), generate your smaller word list file by running `./generate_word_list.py`.  
 After that, you can delete the large word list file to keep it from cluttering up your disk space.
