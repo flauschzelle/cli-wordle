@@ -8,13 +8,14 @@ from get_char import get_char
 
 # some parameters and defaults:
 
-word_len = 5
-max_guesses = word_len + (word_len//4)
-guesses = 0
-guessed = []
-message = "Type a word and\n press ENTER to guess!"
-message_lines = 4
-lines = max_guesses + message_lines
+word_len: int = 5
+max_guesses: int = word_len + (word_len//4)
+guesses: int = 0
+guessed: list = []
+default_message: str = "Type a word and\n press ENTER to guess!"
+message: str = default_message
+message_lines: int = 4
+lines: int = max_guesses + message_lines
 
 
 def load_words(length) -> list:
@@ -193,7 +194,7 @@ while guesses < max_guesses:
 	current_line: int = guesses
 
 	if guess in all_words:
-		message = "Type a word and\n press ENTER to guess!"
+		message = default_message
 		guesses += 1
 		guessed.append(guess)
 	else:
@@ -214,4 +215,5 @@ while guesses < max_guesses:
 	# set the cursor to start the input on the next empty line:
 	print(f"\x1B[{str(lines-guesses)}F\x1B[2K", end="")
 
-print(f" (Random word number {pick_number} of {len(all_words)})\n")
+# in case you want to look up the word in your text file later:
+print(f" (Random word number {pick_number+1} of {len(all_words)})\n")
