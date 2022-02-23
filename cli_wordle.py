@@ -35,7 +35,7 @@ def load_words(length) -> list:
 		line = file.readline()
 		if not line:
 			break
-		words.append(line.strip().upper())
+		words.append(line.strip())
 	file.close()
 	return words
 

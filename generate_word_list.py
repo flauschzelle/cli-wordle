@@ -32,7 +32,7 @@ def generate_word_list(word_len: int) -> bool:
 		line = f_in.readline()
 		if not line:  # reached end of file
 			break
-		word = line.strip()  # cut off whitespaces and newlines
+		word = line.strip().upper()  # cut off whitespace and convert to uppercase
 		if len(word) == word_len:  # filter for word length
 			f_out.write(f"{word}\n")
 			count += 1
