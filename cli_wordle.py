@@ -10,7 +10,7 @@ from generate_word_list import generate_word_list
 # some parameters and defaults:
 
 word_len: int = 5
-max_guesses: int = word_len + (word_len//4)
+max_guesses: int = max(6, word_len + max(1, (word_len//3)))
 guesses: int = 0
 guessed: list = []
 default_message: str = "Type a word and\n press ENTER to guess!"
@@ -25,7 +25,7 @@ def load_words(length) -> list:
 	import os
 	if not os.path.isfile(filename):
 		if not generate_word_list(length):
-			print("Could not generate word list file :(")
+			print("Could not generate word list file.")
 			# TODO: proper error handling
 			return [""]
 
