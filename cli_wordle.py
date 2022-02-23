@@ -5,6 +5,7 @@
 
 import random
 from get_char import get_char
+from generate_word_list import generate_word_list
 
 # some parameters and defaults:
 
@@ -20,8 +21,14 @@ lines: int = max_guesses + message_lines
 
 def load_words(length) -> list:
 	# loads the list of allowed words to guess
-
 	filename = "words" + str(length) + ".txt"
+	import os
+	if not os.path.isfile(filename):
+		if not generate_word_list(length):
+			print("Could not generate word list file :(")
+			# TODO: proper error handling
+			return [""]
+
 	file = open(filename, "r")
 	words = []
 	while True:
