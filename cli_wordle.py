@@ -10,6 +10,8 @@ from generate_word_list import generate_word_list
 # some parameters and defaults:
 
 word_len: int = 5
+language: str = "English"  # for a list of supported languages, see generate_word_list.py
+
 max_guesses: int = max(6, word_len + max(1, (word_len//3)))
 guesses: int = 0
 guessed: list = []
@@ -19,12 +21,12 @@ message_lines: int = 4
 lines: int = max_guesses + message_lines
 
 
-def load_words(length) -> list:
+def load_words(lang: str, length: int) -> list:
 	# loads the list of allowed words to guess
-	filename = "words" + str(length) + ".txt"
+	filename = f"words_{lang.lower()}_{length}.txt"
 	import os
 	if not os.path.isfile(filename):
-		if not generate_word_list(length):
+		if not generate_word_list(lang.lower(), length):
 			print("Could not generate word list file.")
 			# TODO: proper error handling
 			return [""]
@@ -40,7 +42,7 @@ def load_words(length) -> list:
 	return words
 
 
-all_words = load_words(word_len)
+all_words = load_words(language, word_len)
 
 # choose a random word from the word list as the solution:
 
@@ -138,7 +140,7 @@ def display_input_char(ch: str, place: int):
 # the actual game starts here:
 
 print("\n Welcome to COMMAND LINE WORDLE!\n")
-print(" Guess the", word_len, "letter word\n in", max_guesses, "or less tries!\n")
+print(f" Guess the {language} word\n with {word_len} letters\n in {max_guesses} or less tries!\n")
 
 # start with showing the empty grid:
 
