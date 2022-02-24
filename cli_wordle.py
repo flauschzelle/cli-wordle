@@ -49,6 +49,22 @@ all_words = load_words(language, word_len)
 pick_number = random.randint(0, len(all_words))
 solution = all_words[pick_number]
 
+# make a list of all letters that are allowed:
+
+
+def list_letters(words: list) -> list:
+
+	letters: list = []
+	for w in words:
+		for l in w:
+			if l not in letters:
+				letters.append(l)
+	letters.sort()
+	return letters
+
+
+allowed_letters: list = list_letters(all_words)
+
 # some colors etc. for output formatting:
 
 BGREEN = '\033[42m'
@@ -137,6 +153,49 @@ def display_input_char(ch: str, place: int):
 		print("\b\b\b\x1B[0K", end="", flush=True)
 
 
+def has_right_place(letter: str, word: str, pattern: str) -> bool:
+	for i in range(len(word)):
+		if word[i] == pattern[i] and word[i] == letter:
+			return True
+	return False
+
+
+def display_alphabet(lang: str, letters: list, guessed_words: list, pattern: str) -> int:
+
+	line_max: int = 13
+	line_len: int = 0
+	line_br: str = ""
+	line_count: int = 4
+
+	print(f" The following letters are allowed for {lang}:\n ")
+
+	for ltr in letters:
+		hint_color: str = ""
+		for g in guessed_words:
+			if ltr not in g:
+				# no hints for this letter
+				continue
+			elif ltr in g and ltr not in pattern:
+				hint_color = GRAY
+				break
+			elif has_right_place(ltr, g, pattern):
+				hint_color = GREEN
+				break
+			elif ltr in g and ltr in pattern:
+				hint_color = YELLOW
+				# next guess might still have a green hint
+				continue
+		line_len += 1
+		if line_len > line_max:
+			line_len = 0
+			line_count += 1
+			line_br = "\n "
+		print(f" {line_br}{hint_color}{ltr}{ENDC} ", end="")
+		line_br = ""
+	print("\n ")
+	return line_count
+
+
 # the actual game starts here:
 
 print("\n Welcome to COMMAND LINE WORDLE!\n")
@@ -146,6 +205,7 @@ print(f" Guess the {language} word\n with {word_len} letters\n in {max_guesses} 
 
 display_guesses(0)
 print(f"\n {message}\n")
+lines = lines + display_alphabet(language, allowed_letters, guessed, solution)
 
 # start input on the first empty grid line:
 
@@ -220,6 +280,7 @@ while guesses < max_guesses:
 		break
 
 	print(f"\n {message}\n")
+	display_alphabet(language, allowed_letters, guessed, solution)
 
 	# set the cursor to start the input on the next empty line:
 	print(f"\x1B[{str(lines-guesses)}F\x1B[2K", end="")
