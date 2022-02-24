@@ -26,7 +26,7 @@ def load_words(lang: str, length: int) -> list:
 	filename = f"words_{lang.lower()}_{length}.txt"
 	import os
 	if not os.path.isfile(filename):
-		if not generate_word_list(lang.lower(), length):
+		if not generate_word_list(lang, length):
 			print("Could not generate word list file.")
 			# TODO: proper error handling
 			return [""]
