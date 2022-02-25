@@ -144,13 +144,13 @@ def display_guesses(from_line: int):
 
 
 def display_input_char(ch: str, place: int):
+	# delete / backspace:
+	if ch == '\x7f':
+		print("\b\b\b\x1B[0K", end="", flush=True)
 	# letters:
-	if ch.isalpha():
+	else:
 		letter: str = color_code_input(ch.upper(), place, solution, guessed)
 		print(f" {letter} ", end="", flush=True)
-	# delete / backspace:
-	elif ch == '\x7f':
-		print("\b\b\b\x1B[0K", end="", flush=True)
 
 
 def has_right_place(letter: str, word: str, pattern: str) -> bool:
@@ -225,16 +225,19 @@ while guesses < max_guesses:
 			if c.isalpha() and c.upper() in allowed_letters:
 				current_input += c
 				display_input_char(c, len(current_input))
-			elif c.isalpha():
+			elif c.isalpha() or c.upper() in allowed_letters or c == '\x20':
 				continue
 			elif c == '\x7f' or c == '\n':
 				continue
 			else:
 				break
 
-		# in an incomplete line, backspace is also allowed:
+		# in an incomplete line, space and backspace is also allowed:
 		elif len(current_input) < word_len:
-			if c.isalpha() and c.upper() in allowed_letters:
+			if (c in ' _' or c == '\x20') and '_' in allowed_letters:
+				c = '_'
+				current_input += c
+			elif c.upper() in allowed_letters:
 				current_input += c
 			elif c.isalpha():
 				continue

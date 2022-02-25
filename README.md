@@ -1,6 +1,6 @@
 # cli-wordle
 
-A word guessing game implementation for unix command line. Because everyone loves making wordle clones right now :)
+A word guessing game implementation for command line terminals. Because everyone loves making wordle clones right now :)
 
 I mostly made this project for practice - I'm learning Python for a new job, so I made something fun and simple to start getting used to the new language. This is the first usable thing I've ever written in Python, so don't judge me too hard, please.
 
@@ -16,7 +16,7 @@ On **Windows**, it *might* work if your system is newer than 2016 and if you sta
 
 Obviously, you need to have **Python 3** installed.
 
-In addition to the files in this repo, you need a **word list** to choose words from. I didn't include word lists directly in here to keep them from bloating the size of this repo, but the game will automatically download a word list when you run it for the first time. This will use about 5 MB for the English version, and 31 MB for the German version.
+In addition to the files in this repo, you need a **word list** to choose words from. I didn't include word lists directly in here to keep them from bloating the size of this repo, but the game will automatically download a word list when you run it for the first time. This will use between 3 and 30 MB per language.
 
 ## Word length
 The default word length is 5 letters, but it can easily be changed if you want to try something else.
@@ -27,12 +27,10 @@ To set the new word length in the game, change the value of `word_len` in `cli_w
 
 The default language is English. 
 
-If you want to guess German words instead, change the value of `language` in `cli_wordle.py` (line 13) to `"German"`.
+If you want to guess German, French, or Spanish words instead, change the value of `language` in `cli_wordle.py` (line 13) to `"German"`, `"French"` or `"Spanish"`.
 
-If you want to use any other language, add the name of the language and the url of a word list to `sources` in `generate_word_list.py` (line 6) and change the value of  `language` in `cli_wordle.py` (line 13) to the new language name.
+If you want to use any other language, add the name of the language and the url of a word list (as a utf8-encoded .txt file) to `sources` in `generate_word_list.py` (line 6) and change the value of `language` in `cli_wordle.py` (line 13) to the new language name.
 
 Feel free to let me know where to find a good word list for any language you like, so I can include it in the game.
-
-The [English word list](https://github.com/dwyl/english-words/raw/master/words_alpha.txt) I'm currently using contains a lot of obscure words I've never seen before, so if you know a better one (maybe sorted by frequency), also feel free to let me know :)
 
 If your word list is not available online, you can also manually put it in a file named `words_<language>.txt` and change the `language` value in `cli_wordle.py` without adding a URL anywhere.

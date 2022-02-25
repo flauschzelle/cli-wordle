@@ -4,8 +4,10 @@
 def generate_word_list(language: str, word_len: int) -> bool:
 
 	sources: dict = {
-		"English": "https://github.com/dwyl/english-words/raw/master/words_alpha.txt",
-		"German": "https://gist.githubusercontent.com/MarvinJWendt/2f4f4154b8ae218600eb091a5706b5f4/raw/36b70dd6be330aa61cd4d4cdfda6234dcb0b8784/wordlist-german.txt"
+		"English": "https://github.com/lorenbrichter/Words/raw/master/Words/en.txt",
+		"German": "https://github.com/lorenbrichter/Words/raw/master/Words/de.txt",
+		"French": "https://github.com/lorenbrichter/Words/raw/master/Words/fr.txt",
+		"Spanish": "https://github.com/lorenbrichter/Words/raw/master/Words/es.txt"
 		}
 
 	lang_filename: str = f"words_{language.lower()}.txt"
@@ -39,7 +41,15 @@ def generate_word_list(language: str, word_len: int) -> bool:
 		line = f_in.readline()
 		if not line:  # reached end of file
 			break
-		word = line.strip().upper()  # cut off whitespace and convert to uppercase
+		word = line.strip().upper()  # cut off trailing whitespace and convert to uppercase
+
+		# convert spaces to underscores:
+		while ' ' in word:
+			lw = list(word)
+			pos = lw.index(' ')
+			lw[pos] = '_'
+			word = ''.join(lw)
+
 		if len(word) == word_len:  # filter for word length
 			word_list.append(word)
 	f_in.close()
