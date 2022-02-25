@@ -56,9 +56,9 @@ def list_letters(words: list) -> list:
 
 	letters: list = []
 	for w in words:
-		for l in w:
-			if l not in letters:
-				letters.append(l)
+		for ltr in w:
+			if ltr not in letters:
+				letters.append(ltr)
 	letters.sort()
 	return letters
 
@@ -222,9 +222,11 @@ while guesses < max_guesses:
 
 		# in an empty line, only letters are allowed:
 		if len(current_input) == 0:
-			if c.isalpha():
+			if c.isalpha() and c.upper() in allowed_letters:
 				current_input += c
 				display_input_char(c, len(current_input))
+			elif c.isalpha():
+				continue
 			elif c == '\x7f' or c == '\n':
 				continue
 			else:
@@ -232,8 +234,10 @@ while guesses < max_guesses:
 
 		# in an incomplete line, backspace is also allowed:
 		elif len(current_input) < word_len:
-			if c.isalpha():
+			if c.isalpha() and c.upper() in allowed_letters:
 				current_input += c
+			elif c.isalpha():
+				continue
 			elif c == '\x7f':
 				current_input = current_input[0:-1]
 			elif c == '\n':
