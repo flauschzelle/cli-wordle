@@ -94,11 +94,11 @@ def color_code_hints(text: str, pattern: str) -> str:
 	ctext: str = ""
 	hidden: list = []
 
-	for i in range (len(pattern)):
+	for i in range(len(pattern)):
 		if text[i] != pattern[i]:
 			hidden.append(pattern[i])
 
-	for i in range (len(pattern)):
+	for i in range(len(pattern)):
 		if text[i] == pattern[i]:
 			ctext += bold_colored_text(text[i], BGREEN)
 		elif text[i] in hidden:
@@ -136,7 +136,7 @@ def color_code_input(letter: str, place: int, pattern: str, prev_lines: list) ->
 
 
 def display_guesses(from_line: int):
-	for i in range (from_line, max_guesses):
+	for i in range(from_line, max_guesses):
 		if i < guesses:
 			print(" "+color_code_hints(guessed[i], solution))
 		else:
@@ -187,7 +187,7 @@ def display_alphabet(lang: str, letters: list, guessed_words: list, pattern: str
 				continue
 		line_len += 1
 		if line_len > line_max:
-			line_len = 0
+			line_len = 1
 			line_count += 1
 			line_br = "\n "
 		print(f" {line_br}{hint_color}{ltr}{ENDC} ", end="")
