@@ -2,12 +2,18 @@
 # and creates a filtered list of words with a given length.
 
 def generate_word_list(language: str, word_len: int) -> bool:
-
+	"""
+	creates a txt file with one word of the given length per line
+	:param language: The language to take the words from
+	:param word_len: The length of words to be listed
+	:return: True if a list of more than 2*word_len words was successfully created
+	"""
 	sources: dict = {
 		"English": "https://github.com/lorenbrichter/Words/raw/master/Words/en.txt",
 		"German": "https://github.com/lorenbrichter/Words/raw/master/Words/de.txt",
 		"French": "https://github.com/lorenbrichter/Words/raw/master/Words/fr.txt",
-		"Spanish": "https://github.com/lorenbrichter/Words/raw/master/Words/es.txt"
+		"Spanish": "https://github.com/lorenbrichter/Words/raw/master/Words/es.txt",
+		"Toki Pona": "https://github.com/chrisamaphone/nimi2vec/raw/main/wordlist.txt"
 		}
 
 	lang_filename: str = f"words_{language.lower()}.txt"
@@ -55,10 +61,14 @@ def generate_word_list(language: str, word_len: int) -> bool:
 	f_in.close()
 
 	# count letter frequency:
-	# for (ltr, freq) in count_letter_frequency(word_list)[0]: print(f"{ltr} {freq}")
+	# for (ltr, freq) in count_letter_frequency(word_list): print(f"{ltr} {freq}")
 
-	# filter out words with rare letters:
-	word_list = filter_rare_words(word_list)
+	if len(word_list) == 0:
+		print(f"No {language} words with {word_len} letters found, sorry.")
+		return False
+	else:
+		# filter out words with rare letters:
+		word_list = filter_rare_words(word_list)
 
 	# if the list is too short, it makes no sense to use it:
 
@@ -79,28 +89,38 @@ def generate_word_list(language: str, word_len: int) -> bool:
 	return True
 
 
-def count_letter_frequency(words: list) -> (list, dict):
+def count_letter_frequency(words: list) -> list:
+	"""
+	counts the frequency of any letters in a list of words
+	:param words: a list of words
+	:return: a list of (letter, freq) tuples, sorted by frequency
+	"""
 	letter_frequency: dict = {}
 	for w in words:
-		for l in w:
-			if l in letter_frequency:
-				letter_frequency[l] += 1
+		for ltr in w:
+			if ltr in letter_frequency:
+				letter_frequency[ltr] += 1
 			else:
-				letter_frequency[l] = 1
+				letter_frequency[ltr] = 1
 	letter_list = list(letter_frequency.items())
 	letter_list.sort(key=(lambda tup: tup[1]), reverse=True)
 
-	return letter_list, letter_frequency
+	return letter_list
 
 
 def filter_rare_words(words: list) -> list:
+	"""
+	removes words from a list if they contain any letter that is 200 times less frequent that the most frequent letter
+	:param words: the list to be filtered
+	:return: the list without the rare-letter-containing words
+	"""
 	lf = count_letter_frequency(words)
-	max_letter_freq: int = lf[0][0][1]
+	max_letter_freq: int = lf[0][1]
 	cutoff: int = 200
 	min_letter_freq: int = max_letter_freq // cutoff
 
 	rare_letters: set = set()
-	for (ltr, freq) in lf[0]:
+	for (ltr, freq) in lf:
 		if freq <= min_letter_freq:
 			rare_letters.add(ltr)
 

@@ -1,6 +1,10 @@
 # taken from here: https://stackoverflow.com/a/36974338
 
 def get_char():
+    """
+    reads a single character from standard input
+    :return: the character that is typed in
+    """
     # figure out which function to use once, and store it in _func
     if "_func" not in get_char.__dict__:
         try:

@@ -16,20 +16,20 @@ On **Windows**, it *might* work if your system is newer than 2016 and if you sta
 
 Obviously, you need to have **Python 3** installed.
 
-In addition to the files in this repo, you need a **word list** to choose words from. I didn't include word lists directly in here to keep them from bloating the size of this repo, but the game will automatically download a word list when you run it for the first time. This will use between 3 and 30 MB per language.
+In addition to the files in this repo, the game needs a **word list** to choose words from. I didn't include word lists directly in here to keep them from bloating the size of this repo, but the game will automatically download a word list when you run it for the first time. This will use between 3 and 30 MB per language.
 
 ## Word length
 The default word length is 5 letters, but it can easily be changed if you want to try something else.
 
-To set the new word length in the game, change the value of `word_len` in `cli_wordle.py` (line 12) before playing.
+To set the new word length in the game, change the value of `word_len` in `cli_wordle.py` (line 11) before playing.
 
 ## Language
 
 The default language is English. 
 
-If you want to guess German, French, or Spanish words instead, change the value of `language` in `cli_wordle.py` (line 13) to `"German"`, `"French"` or `"Spanish"`.
+If you want to guess German, French, Spanish, or Toki Pona words instead, change the value of `language` in `cli_wordle.py` (line 12) to `"German"`, `"French"`, `"Spanish"` or `"Toki Pona"`.
 
-If you want to use any other language, add the name of the language and the url of a word list (as a utf8-encoded .txt file) to `sources` in `generate_word_list.py` (line 6) and change the value of `language` in `cli_wordle.py` (line 13) to the new language name.
+If you want to use any other language, add the name of the language and the url of a word list (utf8-encoded _.txt_ file) to `sources` in `generate_word_list.py` (line 6) and change the value of `language` in `cli_wordle.py` (line 12) to the new language name.
 
 Feel free to let me know where to find a good word list for any language you like, so I can include it in the game.
 
