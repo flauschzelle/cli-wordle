@@ -1,0 +1,14 @@
+cli-wordle configuration
+------------------------
+
+word length: 5
+language: English
+
+word list sources:
+------------------
+
+English: https://github.com/lorenbrichter/Words/raw/master/Words/en.txt
+French: https://github.com/lorenbrichter/Words/raw/master/Words/fr.txt
+German: https://github.com/lorenbrichter/Words/raw/master/Words/de.txt
+Spanish: https://github.com/lorenbrichter/Words/raw/master/Words/es.txt
+Toki Pona: https://github.com/chrisamaphone/nimi2vec/raw/main/wordlist.txt

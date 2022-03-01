@@ -8,24 +8,20 @@ def generate_word_list(language: str, word_len: int) -> bool:
 	:param word_len: The length of words to be listed
 	:return: True if a list of more than 2*word_len words was successfully created
 	"""
-	sources: dict = {
-		"English": "https://github.com/lorenbrichter/Words/raw/master/Words/en.txt",
-		"German": "https://github.com/lorenbrichter/Words/raw/master/Words/de.txt",
-		"French": "https://github.com/lorenbrichter/Words/raw/master/Words/fr.txt",
-		"Spanish": "https://github.com/lorenbrichter/Words/raw/master/Words/es.txt",
-		"Toki Pona": "https://github.com/chrisamaphone/nimi2vec/raw/main/wordlist.txt"
-		}
 
 	lang_filename: str = f"words_{language.lower()}.txt"
 	short_filename: str = f"words_{language.lower()}_{word_len}.txt"
 
 	# download the source word list if it's not already stored:
 
-	url: str = sources[language]
 	import requests
 	import os
 	if not os.path.isfile(lang_filename):
-		print(f"Word list source file not found in local memory.\nDownloading {url} ...")
+		print(f"Word list source file not found in local memory.")
+		url: str = read_source_from_config(language)
+		if url == "":
+			return False
+		print(f"Downloading {url} ...")
 		r = requests.get(url)
 		with open(lang_filename, "xb") as f:
 			f.write(r.content)
@@ -84,6 +80,24 @@ def generate_word_list(language: str, word_len: int) -> bool:
 
 	print(f"Created list of {len(word_list)} {language} {word_len} letter words in file '{short_filename}'.")
 	return True
+
+
+def read_source_from_config(language: str) -> str:
+	"""
+	reads the source url for the given language from config.txt
+	:param language: the name of the language
+	:return: the url of a word list, if present
+	"""
+	url: str = ""
+	with open("config.txt", "r") as conf:
+		while True:
+			line: str = conf.readline()
+			if line[0:len(language)] == language:
+				url = line[len(language)+2:].strip()
+				break
+	if url == "":
+		print(f"No source url found for {language}, please check available languages in config.txt")
+	return url
 
 
 def count_letter_frequency(words: list) -> list:

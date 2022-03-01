@@ -6,11 +6,6 @@ from random import randint
 from get_char import get_char
 from generate_word_list import generate_word_list
 
-# some parameters:
-
-word_len: int = 5
-language: str = "English"  # for a list of supported languages, see generate_word_list.py
-
 # ANSI escape codes for output formatting:
 
 BG_GREEN = '\033[42m'
@@ -24,6 +19,25 @@ YELLOW = '\033[33m'
 
 END = '\033[0m'
 BOLD = '\033[1m'
+
+
+def read_config() -> (int, str):
+	"""
+	reads word length and language from config.txt file
+	:return: word length and language name
+	"""
+	length: int = 0
+	lang: str = ""
+	with open("config.txt", "r") as conf:
+		while True:
+			line: str = conf.readline()
+			if line[0:12] == "word length:":
+				length = int(line[13:].strip())
+				continue
+			elif line[0:9] == "language:":
+				lang = line[10:].strip()
+				break
+	return length, lang
 
 
 def load_words(lang: str, length: int) -> list:
@@ -229,6 +243,9 @@ def start_game():
 	runs the actual game
 	:return: (no return value)
 	"""
+
+	word_len, language = read_config()
+
 	all_words = load_words(language, word_len)
 
 	if len(all_words) > 0:

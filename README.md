@@ -18,19 +18,23 @@ Obviously, you need to have **Python 3** installed.
 
 In addition to the files in this repo, the game needs a **word list** to choose words from. I didn't include word lists directly in here to keep them from bloating the size of this repo, but the game will automatically download a word list when you run it for the first time. This will use between 3 and 30 MB per language.
 
-## Word length
-The default word length is 5 letters, but it can easily be changed if you want to try something else.
+## Word length and language
+The default word length is 5 letters and the default language is English. 
 
-To set the new word length in the game, change the value of `word_len` in `cli_wordle.py` (line 11) before playing.
+To change one or both of these, edit the `config.txt` file.
 
-## Language
+Currently, sources are included for the following languages:
 
-The default language is English. 
+- English
+- French
+- German
+- Spanish
+- Toki Pona
 
-If you want to guess German, French, Spanish, or Toki Pona words instead, change the value of `language` in `cli_wordle.py` (line 12) to `"German"`, `"French"`, `"Spanish"` or `"Toki Pona"`.
+If you want to use one of these, you can just set the language name in line 5 of `config.txt`.
 
-If you want to use any other language, add the name of the language and the url of a word list (utf8-encoded _.txt_ file) to `sources` in `generate_word_list.py` (line 6) and change the value of `language` in `cli_wordle.py` (line 12) to the new language name.
+If you want to use any other language, add the name of the language and the url of a word list (utf8-encoded _.txt_ file) to the list of sources at the end of `config.txt`.
 
-Feel free to let me know where to find a good word list for any language you like, so I can include it in the game.
+Feel free to let me know where to find a good word list for any language you like, so I can include it for everyone.
 
-If your word list is not available online, you can also manually put it in a file named `words_<language>.txt` and change the `language` value in `cli_wordle.py` without adding a URL anywhere.
+If your word list is not available online, you can also manually put it in a file named `words_<language>.txt` and change the `language` value in `config.txt` without adding a line to the source list.
