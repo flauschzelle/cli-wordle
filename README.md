@@ -23,6 +23,15 @@ Obviously, you need to have **Python 3** installed.
 
 In addition to the files in this repo, the game needs a **word list** to choose words from. I didn't include word lists directly in here to keep them from bloating the size of this repo, but the game will automatically download a word list when you run it for the first time. This will use between 3 and 30 MB per language.
 
+## (Optional:) Run the game in Docker
+
+To be independent of your local python environment, you can also run the game in a docker container. To do so, open this directory in a terminal and enter the following two commands:
+
+```commandline
+docker build -t cli-wordle .
+docker run -it cli-wordle
+```
+
 ## Word length and language
 The default word length is 5 letters and the default language is English. 
 
