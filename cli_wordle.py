@@ -40,14 +40,13 @@ def load_words(lang: str, length: int) -> list:
 			print("Could not generate word list file.")
 			return []
 
-	file = open(filename, "r")
 	words = []
-	while True:
-		line = file.readline()
-		if not line:
-			break
-		words.append(line.strip())
-	file.close()
+	with open(filename, "r") as file:
+		while True:
+			line = file.readline()
+			if not line:
+				break
+			words.append(line.strip())
 	return words
 
 

@@ -27,9 +27,8 @@ def generate_word_list(language: str, word_len: int) -> bool:
 	if not os.path.isfile(lang_filename):
 		print(f"Word list source file not found in local memory.\nDownloading {url} ...")
 		r = requests.get(url)
-		f = open(lang_filename, "xb")
-		f.write(r.content)
-		f.close()
+		with open(lang_filename, "xb") as f:
+			f.write(r.content)
 		if not os.path.isfile(lang_filename):
 			print(f"could not create '{lang_filename}'. Please download it manually from {url}.")
 			return False
@@ -37,28 +36,27 @@ def generate_word_list(language: str, word_len: int) -> bool:
 	# create a filtered list of n letter words:
 
 	print("Reading word list ...")
-	f_in = open(lang_filename, "r")  # read words from this file
-
 	word_list: list = []
 
-	print("Filtering ...")
-	while True:
-		# read next line:
-		line = f_in.readline()
-		if not line:  # reached end of file
-			break
-		word = line.strip().upper()  # cut off trailing whitespace and convert to uppercase
+	with open(lang_filename, "r") as f_in:  # read words from this file
 
-		# convert spaces to underscores:
-		while ' ' in word:
-			lw = list(word)
-			pos = lw.index(' ')
-			lw[pos] = '_'
-			word = ''.join(lw)
+		print("Filtering ...")
+		while True:
+			# read next line:
+			line = f_in.readline()
+			if not line:  # reached end of file
+				break
+			word = line.strip().upper()  # cut off trailing whitespace and convert to uppercase
 
-		if len(word) == word_len:  # filter for word length
-			word_list.append(word)
-	f_in.close()
+			# convert spaces to underscores:
+			while ' ' in word:
+				lw = list(word)
+				pos = lw.index(' ')
+				lw[pos] = '_'
+				word = ''.join(lw)
+
+			if len(word) == word_len:  # filter for word length
+				word_list.append(word)
 
 	# count letter frequency:
 	# for (ltr, freq) in count_letter_frequency(word_list): print(f"{ltr} {freq}")
@@ -78,10 +76,9 @@ def generate_word_list(language: str, word_len: int) -> bool:
 
 	# write list to file:
 
-	f_out = open(short_filename, "x")  # create new file here
-	for w in word_list:
-		f_out.write(f"{w}\n")
-	f_out.close()
+	with open(short_filename, "x") as f_out:  # create new file here
+		for w in word_list:
+			f_out.write(f"{w}\n")
 
 	# if this part is reached, a useful word list was created:
 
