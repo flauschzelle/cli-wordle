@@ -6,7 +6,12 @@ I mostly made this project for practice - I'm learning Python for a new job, so 
 
 ## How to play
 
-Just open this directory in your terminal and run `./cli_wordle.py`. The basic rules are the same as in most of the other countless wordle clones out there.
+Just open this directory in your terminal and run `./cli_wordle.py`. The basic rules are the same as in most of the other countless wordle clones out there:
+
+Guess the secret word by typing in any word and using the hints for your next guess. 
+- If a letter is not in the secret word, it will be marked in gray
+- If a letter is in the right place, it will be marked in green 🟩 
+- If a letter is in the secret word, but in a different place, it will be marked in yellow 🟨
 
 ## System Requirements
 
