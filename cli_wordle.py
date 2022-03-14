@@ -222,8 +222,8 @@ def filter_words_by_letters(words_list: list, forbidden_letters: set) -> list:
 
     if forbidden_letters:
         print(f"Removed {removed_word_count} words containing letters",
-              f"{' '.join(sorted(list(forbidden_letters)))} from the word list:",
-              f"{' '.join(sorted(list(removed_words)))}")
+              f"{' '.join(sorted(forbidden_letters))} from the word list:",
+              f"{' '.join(sorted(removed_words))}")
     return filtered_words
 
 
