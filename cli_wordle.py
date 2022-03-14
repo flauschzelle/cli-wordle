@@ -108,8 +108,8 @@ def generate_word_list(
                 else:
                     letter_frequency[ltr] = 1
 
-            # filter for word length:
-            if len(word) == word_len:
+            # filter for word length, discard duplicates:
+            if len(word) == word_len and word not in word_list:
                 word_list.append(word)
 
         # sort letter frequency list by frequency (descending):
@@ -218,11 +218,14 @@ def filter_words_by_letters(words_list: list, forbidden_letters: set) -> list:
     filtered_words: list = [w for w in words_list
                             if forbidden_letters.isdisjoint(w)]
     removed_word_count: int = len(words_list) - len(filtered_words)
-    removed_words: set = set(words_list) - set(filtered_words)
+    removed_words: list = list(set(words_list) - set(filtered_words))
+    removed_words.sort()
+    forbidden_letters_list: list = list(forbidden_letters)
+    forbidden_letters_list.sort()
 
     if forbidden_letters:
-        print(f"Removed {removed_word_count} words containing letters ",
-              f"{' '.join(forbidden_letters)} from the word list:",
+        print(f"Removed {removed_word_count} words containing letters",
+              f"{' '.join(forbidden_letters_list)} from the word list:",
               f"{' '.join(removed_words)}")
     return filtered_words
 
@@ -540,7 +543,7 @@ def start_game():
 
         print("\n Welcome to COMMAND LINE WORDLE!\n")
         print(f" Guess the {language} word\n with {word_len}",
-              f" letters\n in {max_guesses} or less tries!\n")
+              f"letters\n in {max_guesses} or less tries!\n")
 
         # start with showing the empty grid:
 
