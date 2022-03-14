@@ -218,15 +218,12 @@ def filter_words_by_letters(words_list: list, forbidden_letters: set) -> list:
     filtered_words: list = [w for w in words_list
                             if forbidden_letters.isdisjoint(w)]
     removed_word_count: int = len(words_list) - len(filtered_words)
-    removed_words: list = list(set(words_list) - set(filtered_words))
-    removed_words.sort()
-    forbidden_letters_list: list = list(forbidden_letters)
-    forbidden_letters_list.sort()
+    removed_words: set = set(words_list) - set(filtered_words)
 
     if forbidden_letters:
         print(f"Removed {removed_word_count} words containing letters",
-              f"{' '.join(forbidden_letters_list)} from the word list:",
-              f"{' '.join(removed_words)}")
+              f"{' '.join(sorted(list(forbidden_letters)))} from the word list:",
+              f"{' '.join(sorted(list(removed_words)))}")
     return filtered_words
 
 
