@@ -24,15 +24,14 @@ A word guessing game for command line terminals.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -a, --show-all-languages
-                        show a list of all available languages and exit
+  -a, --all-languages   show a list of all available languages and exit
   -r, --rules           show a description of the game's rules and exit
   -l LANGUAGE, --language LANGUAGE
                         set the language of words to guess
   -n LENGTH, --length LENGTH
                         set the length of words to guess
   -u URL, --url URL     set the URL to download a word list from
-  -s, --save            Remember settings for future uses
+  -s, --save            remember settings for future uses
 
 ```
 
@@ -70,7 +69,7 @@ Currently, sources are included for the following languages:
 - Spanish
 - Toki Pona
 
-You can view a list of all available languages with the flag `--show-all-languages`.
+You can view a list of all available languages with the flag `--all-languages`.
 
 If you want to use any other language, add the name of the language and the url of a word list (utf8-encoded _.txt_ file) to the list of sources at the end of `config.txt`. You can either do this by manually editing the file, or by using the `--language`, `--url` and `--save` arguments.
 

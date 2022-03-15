@@ -739,7 +739,7 @@ if __name__ == '__main__':
     p = ArgumentParser(
         description="A word guessing game for command line terminals."
     )
-    p.add_argument("-a", "--show-all-languages", action="store_true",
+    p.add_argument("-a", "--all-languages", action="store_true",
                    dest="show",
                    help="show a list of all available languages and exit")
     p.add_argument("-r", "--rules", action="store_true",
@@ -752,7 +752,7 @@ if __name__ == '__main__':
     p.add_argument("-u", "--url", dest="url", type=str, default=None,
                    help="set the URL to download a word list from")
     p.add_argument("-s", "--save", action="store_true", dest="save",
-                   help="Remember settings for future uses")
+                   help="remember settings for future uses")
     args = p.parse_args()
     
     if args.url:
