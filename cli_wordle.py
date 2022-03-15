@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from random import randint
+from argparse import ArgumentParser
 
 # ANSI escape codes for output formatting:
 
@@ -33,6 +34,29 @@ YELLOW = '\033[33m'
 
 END = '\033[0m'
 BOLD = '\033[1m'
+
+
+def load_word_list_from_url(language: str, url: str) -> bool:
+    """
+    Download a word list from the internet.
+    
+    :param language: The language to use for the filename
+    :param url: url of a word list (must be a utf8-encoded .txt file)
+    :return: True if the download was successful
+    """
+    
+    lang_filename: str = f"words_{language.lower()}.txt"
+    import requests
+    import os.path
+    print(f"Downloading {url} ...")
+    r = requests.get(url)
+    with open(lang_filename, "xb") as f:
+        f.write(r.content)
+    if not os.path.isfile(lang_filename):
+        print(f"could not create '{lang_filename}'.",
+              f"Please download it manually from {url}.")
+        return False
+    return True
 
 
 def generate_word_list(
@@ -59,20 +83,14 @@ def generate_word_list(
 
     # download the source word list if it's not already stored:
 
-    import requests
-    import os
+    import os.path
     if not os.path.isfile(lang_filename):
         print(f"Word list source file not found in local memory.")
         url: str = read_source_from_config(language)
         if not url:
+            print(f"Found no source URL for {language} word list.")
             return False
-        print(f"Downloading {url} ...")
-        r = requests.get(url)
-        with open(lang_filename, "xb") as f:
-            f.write(r.content)
-        if not os.path.isfile(lang_filename):
-            print(f"could not create '{lang_filename}'.",
-                  f"Please download it manually from {url}.")
+        if not load_word_list_from_url(language, url):
             return False
 
     # create a filtered list of n letter words:
@@ -173,6 +191,27 @@ def read_source_from_config(language: str) -> str:
         print(f"No source url found for {language},",
               "please check available languages in config.txt")
     return url
+
+
+def list_all_languages() -> list:
+    """
+    Make a list of all languages that have sources in config.txt
+    
+    :return: a list of all available language names
+    """
+    langs: list = []
+    reading_sources: bool = False
+    with open("config.txt", "r") as conf:
+        while True:
+            line: str = conf.readline()
+            if line.startswith("word list sources:"):
+                reading_sources = True
+                continue
+            if reading_sources and (':' in line):
+                langs.append(line.split(':', 1)[0])
+            if not line:
+                break
+    return langs
 
 
 def find_rare_letters(letter_freq: list, cutoff: int) -> set:
@@ -286,6 +325,50 @@ def read_config() -> (int, str):
                 lang = line[10:].strip()
                 break
     return length, lang
+
+
+def write_config(language: str, length: int, url: str = None):
+    """
+    Writes the given language, word length and url into config.txt.
+    
+    :param language: The language to be set
+    :param length: The word length to be set
+    :param url: (optional) source url to be set for the language
+    :return: (no return value, just writes to the file)
+    """
+    # read the whole file into a list:
+    with open("config.txt", "rt") as conf:
+        data: list = conf.readlines()
+        len_line: int = 0
+        lang_line: int = 0
+        url_line: int = 0
+        for line in data:
+            if line.startswith("word length:"):
+                if length:
+                    len_line = data.index(line)
+                continue
+            if line.startswith("language:"):
+                if language:
+                    lang_line = data.index(line)
+                continue
+            if line.startswith(language):
+                if url:
+                    url_line = data.index(line)
+                break
+                
+        # modify the list:
+        if len_line:
+            data[len_line] = f"word length: {length}\n"
+        if lang_line:
+            data[lang_line] = f"language: {language}\n"
+        if url_line:
+            data[url_line] = f"{language}: {url}\n"
+        elif url and language:  # url for new language:
+            data.append(f"{language}: {url}\n")
+        
+    # write modified list back into the file:
+    with open("config.txt", "wt") as conf:
+        conf.writelines(data)
 
 
 def load_words(lang: str, length: int) -> list:
@@ -511,14 +594,21 @@ def display_alphabet(
     return line_count
 
 
-def start_game():
+def start_game(language: str = None, word_len: int = None):
     """
-    Run the game with settings from the config file.
+    Run the game with given settings or settings from the config file.
     
+    :param language: the language of guessable words
+    :param word_len: the length of guessable words
     :return: (no return value)
     """
 
-    word_len, language = read_config()
+    if not (language and word_len):
+        (conf_len, conf_lang) = read_config()
+        if not word_len:
+            word_len = conf_len
+        if not language:
+            language = conf_lang
 
     all_words = load_words(language, word_len)
 
@@ -631,7 +721,8 @@ def start_game():
                 break
 
             if guesses >= max_guesses:
-                print("\n No more tries left, sorry :(\n")
+                print("\n No more tries left, sorry :(")
+                print(f" The solution was {solution}.\n")
                 break
 
             print(f"\n {message}\n")
@@ -645,4 +736,48 @@ def start_game():
 
 
 if __name__ == '__main__':
-    start_game()
+    p = ArgumentParser(
+        description="A word guessing game for command line terminals."
+    )
+    p.add_argument("-a", "--show-all-languages", action="store_true",
+                   dest="show",
+                   help="show a list of all available languages and exit")
+    p.add_argument("-r", "--rules", action="store_true",
+                   dest="rules",
+                   help="show a description of the game's rules and exit")
+    p.add_argument("-l", "--language", dest="language", type=str,
+                   default=None, help="set the language of words to guess")
+    p.add_argument("-n", "--length", dest="length", type=int,
+                   default=None, help="set the length of words to guess")
+    p.add_argument("-u", "--url", dest="url", type=str, default=None,
+                   help="set the URL to download a word list from")
+    p.add_argument("-s", "--save", action="store_true", dest="save",
+                   help="Remember settings for future uses")
+    args = p.parse_args()
+    
+    if args.url:
+        if not args.language:
+            print("You need to specify a language name",
+                  "for the word list to be downloaded")
+        else:
+            load_word_list_from_url(args.language, args.url)
+    if args.save:
+        write_config(args.language, args.length, args.url)
+    if args.show:
+        print("The following languages are currently available:\n")
+        languages = list_all_languages()
+        for lan in languages:
+            print(lan)
+    elif args.rules:
+        print("\nGuess the secret word by typing in any word",
+              "\nand using the hints for your next guess:\n\n",
+              " * If a letter is not in the secret word,",
+              f"\n    it will be marked in {BG_GRAY} gray {END}.\n\n",
+              " * If a letter is in the right place,",
+              f"\n    it will be marked in {BG_GREEN} green {END}.\n\n",
+              " * If a letter is in the secret word,",
+              "\n    but in a different place,",
+              f"\n    it will be marked in {BG_YELLOW} yellow {END}.\n"
+              )
+    else:
+        start_game(args.language, args.length)

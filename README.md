@@ -13,6 +13,29 @@ Guess the secret word by typing in any word and using the hints for your next gu
 - If a letter is in the right place, it will be marked in green 🟩 
 - If a letter is in the secret word, but in a different place, it will be marked in yellow 🟨
 
+Use the `--help` or `-h` flag to get more info about all the optional command line arguments:
+
+```commandline
+$ ./cli_wordle.py -h
+
+usage: cli_wordle.py [-h] [-a] [-r] [-l LANGUAGE] [-n LENGTH] [-u URL] [-s]
+
+A word guessing game for command line terminals.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -a, --show-all-languages
+                        show a list of all available languages and exit
+  -r, --rules           show a description of the game's rules and exit
+  -l LANGUAGE, --language LANGUAGE
+                        set the language of words to guess
+  -n LENGTH, --length LENGTH
+                        set the length of words to guess
+  -u URL, --url URL     set the URL to download a word list from
+  -s, --save            Remember settings for future uses
+
+```
+
 ## System Requirements
 
 I'm only testing this on **Linux**. It should also work on **macOS** (thanks to [Lena](https://github.com/lenaschimmel/) for testing).  
@@ -35,7 +58,9 @@ docker run -it cli-wordle
 ## Word length and language
 The default word length is 5 letters and the default language is English. 
 
-To change one or both of these, edit the `config.txt` file.
+To change one or both of these, start the game with `--language` and `--length` arguments. If you want the game to remember your choice for later, use the `--save` flag.  
+
+You can also manually edit the `config.txt` file.
 
 Currently, sources are included for the following languages:
 
@@ -45,9 +70,9 @@ Currently, sources are included for the following languages:
 - Spanish
 - Toki Pona
 
-If you want to use one of these, you can just set the language name in line 5 of `config.txt`.
+You can view a list of all available languages with the flag `--show-all-languages`.
 
-If you want to use any other language, add the name of the language and the url of a word list (utf8-encoded _.txt_ file) to the list of sources at the end of `config.txt`.
+If you want to use any other language, add the name of the language and the url of a word list (utf8-encoded _.txt_ file) to the list of sources at the end of `config.txt`. You can either do this by manually editing the file, or by using the `--language`, `--url` and `--save` arguments.
 
 Feel free to let me know where to find a good word list for any language you like, so I can include it for everyone.
 
