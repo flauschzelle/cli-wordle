@@ -335,19 +335,13 @@ def write_config(language: str, length: int, url: str = None):
         len_line: int = 0
         lang_line: int = 0
         url_line: int = 0
-        for line in data:
-            if line.startswith("word length:"):
-                if length:
-                    len_line = data.index(line)
-                continue
-            if line.startswith("language:"):
-                if language:
-                    lang_line = data.index(line)
-                continue
-            if line.startswith(language):
-                if url:
-                    url_line = data.index(line)
-                break
+        for i, line in enumerate(data):
+            if line.startswith("word length:") and length:
+                len_line = i
+            elif line.startswith("language:") and language:
+                lang_line = i
+            elif line.startswith(language) and url:
+                url_line = i
                 
         # modify the list:
         if len_line:
