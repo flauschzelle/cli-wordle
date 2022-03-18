@@ -104,11 +104,7 @@ def generate_word_list(
 
         letter_frequency: dict = {}
 
-        while True:
-            # read next line:
-            line = f_in.readline()
-            if not line:  # reached end of file
-                break
+        for line in f_in:
             # cut off trailing whitespace and convert to uppercase:
             word = line.strip().upper()
 
@@ -182,8 +178,7 @@ def read_source_from_config(language: str) -> str:
     """
     url: str = ""
     with open("config.txt", "r") as conf:
-        while True:
-            line: str = conf.readline()
+        for line in conf:
             if line.startswith(language):
                 url = line[len(language) + 2:].strip()
                 break
@@ -202,8 +197,7 @@ def list_all_languages() -> list:
     langs: list = []
     reading_sources: bool = False
     with open("config.txt", "r") as conf:
-        while True:
-            line: str = conf.readline()
+        for line in conf:
             if line.startswith("word list sources:"):
                 reading_sources = True
                 continue
@@ -316,8 +310,7 @@ def read_config() -> (int, str):
     length: int = 0
     lang: str = ""
     with open("config.txt", "r") as conf:
-        while True:
-            line: str = conf.readline()
+        for line in conf:
             if line.startswith("word length:"):
                 length = int(line[13:].strip())
                 continue
@@ -391,10 +384,7 @@ def load_words(lang: str, length: int) -> list:
 
     words = []
     with open(filename, "r") as file:
-        while True:
-            line = file.readline()
-            if not line:
-                break
+        for line in file:
             words.append(line.strip())
     return words
 
