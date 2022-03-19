@@ -177,12 +177,13 @@ def read_source_from_config(language: str) -> str:
     :return: the url of a word list, if present
     """
 
-    from configparser import ConfigParser
+    from configparser import ConfigParser, Error
     from sys import exit
 
     config = ConfigParser()
     config.read("config.txt")
 
+    url = ""
     try:
         url = config.get("word list sources", language)
     except Error as e:
@@ -353,6 +354,7 @@ def write_config(language: str, length: int, url: str = None):
     # write modified list back into the file:
     with open("config.txt", "wt") as f:
         config.write(f)
+
 
 def load_words(lang: str, length: int) -> list:
     """
@@ -736,7 +738,7 @@ if __name__ == '__main__':
     args = p.parse_args()
 
     if args.language:
-        args.language = args.language.lower() # or configparser will hate us later on
+        args.language = args.language.lower()  # or configparser will hate us later on
 
     if args.url:
         if not args.language:
