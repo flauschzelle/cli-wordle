@@ -45,7 +45,7 @@ def load_word_list_from_url(language: str, url: str) -> bool:
     :return: True if the download was successful
     """
     
-    lang_filename: str = f"words_{language.lower()}.txt"
+    lang_filename: str = f"words_{language}.txt"
     import requests
     import os.path
     print(f"Downloading {url} ...")
@@ -78,8 +78,8 @@ def generate_word_list(
     was successfully created
     """
 
-    lang_filename: str = f"words_{language.lower()}.txt"
-    short_filename: str = f"words_{language.lower()}_{word_len}.txt"
+    lang_filename: str = f"words_{language}.txt"
+    short_filename: str = f"words_{language}_{word_len}.txt"
 
     # download the source word list if it's not already stored:
 
@@ -176,15 +176,21 @@ def read_source_from_config(language: str) -> str:
     :param language: the name of the language
     :return: the url of a word list, if present
     """
-    url: str = ""
-    with open("config.txt", "r") as conf:
-        for line in conf:
-            if line.startswith(language):
-                url = line[len(language) + 2:].strip()
-                break
-    if not url:
-        print(f"No source url found for {language},",
-              "please check available languages in config.txt")
+
+    from configparser import ConfigParser, Error
+    from sys import exit
+
+    config = ConfigParser()
+    config.read("config.txt")
+
+    url = ""
+    try:
+        url = config.get("word list sources", language)
+    except Error as e:
+        print(f"No source url found for language {language}. ({e})")
+        print("Please check available languages in config.txt.")
+        exit(1)
+
     return url
 
 
@@ -194,17 +200,15 @@ def list_all_languages() -> list:
     
     :return: a list of all available language names
     """
-    langs: list = []
-    reading_sources: bool = False
-    with open("config.txt", "r") as conf:
-        for line in conf:
-            if line.startswith("word list sources:"):
-                reading_sources = True
-                continue
-            if reading_sources and (':' in line):
-                langs.append(line.split(':', 1)[0])
-            if not line:
-                break
+
+    from configparser import ConfigParser
+    config = ConfigParser()
+    config.read("config.txt")
+
+    langs = []
+    for k in config['word list sources']:
+        langs.append(k)
+
     return langs
 
 
@@ -307,17 +311,15 @@ def read_config() -> (int, str):
     
     :return: a tuple of word length and language name
     """
-    length: int = 0
-    lang: str = ""
-    with open("config.txt", "r") as conf:
-        for line in conf:
-            if line.startswith("word length:"):
-                length = int(line[13:].strip())
-                continue
-            elif line.startswith("language:"):
-                lang = line[10:].strip()
-                break
-    return length, lang
+    from configparser import ConfigParser
+
+    config = ConfigParser()
+    config.read("config.txt")
+
+    word_length = config.getint("wordle configuration", "word length", fallback=5)
+    language = config.get("wordle configuration", "language", fallback="en")
+
+    return word_length, language
 
 
 def write_config(language: str, length: int, url: str = None):
@@ -329,33 +331,29 @@ def write_config(language: str, length: int, url: str = None):
     :param url: (optional) source url to be set for the language
     :return: (no return value, just writes to the file)
     """
-    # read the whole file into a list:
-    with open("config.txt", "rt") as conf:
-        data: list = conf.readlines()
-        len_line: int = 0
-        lang_line: int = 0
-        url_line: int = 0
-        for i, line in enumerate(data):
-            if line.startswith("word length:") and length:
-                len_line = i
-            elif line.startswith("language:") and language:
-                lang_line = i
-            elif line.startswith(language) and url:
-                url_line = i
-                
-        # modify the list:
-        if len_line:
-            data[len_line] = f"word length: {length}\n"
-        if lang_line:
-            data[lang_line] = f"language: {language}\n"
-        if url_line:
-            data[url_line] = f"{language}: {url}\n"
-        elif url and language:  # url for new language:
-            data.append(f"{language}: {url}\n")
-        
+
+    from configparser import ConfigParser, Error
+    from sys import exit
+    config = ConfigParser()
+
+    # read config from file
+    config.read("config.txt")
+
+    # if no new url is given, preserve the old one for this language
+    if url is None:
+        try:
+            url = config.get("word list sources", language)
+        except Error as e:
+            print(f"{language} is not a valid language. ({e})")
+            exit(1)
+
+    config.set("wordle configuration", "word length", str(length))
+    config.set("wordle configuration", "language", language)
+    config.set("word list sources", language, url)
+
     # write modified list back into the file:
-    with open("config.txt", "wt") as conf:
-        conf.writelines(data)
+    with open("config.txt", "wt") as f:
+        config.write(f)
 
 
 def load_words(lang: str, length: int) -> list:
@@ -369,7 +367,7 @@ def load_words(lang: str, length: int) -> list:
     :param length: number of letters (n) in each word
     :return: a list of words with n letters
     """
-    filename = f"words_{lang.lower()}_{length}.txt"
+    filename = f"words_{lang}_{length}.txt"
     import os
     if not os.path.isfile(filename):
         if not generate_word_list(lang, length):
@@ -738,7 +736,10 @@ if __name__ == '__main__':
     p.add_argument("-s", "--save", action="store_true", dest="save",
                    help="remember settings for future uses")
     args = p.parse_args()
-    
+
+    if args.language:
+        args.language = args.language.lower()  # or configparser will hate us later on
+
     if args.url:
         if not args.language:
             print("You need to specify a language name",
