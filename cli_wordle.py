@@ -47,15 +47,10 @@ def load_word_list_from_url(language: str, url: str) -> bool:
     
     lang_filename: str = f"words_{language.lower()}.txt"
     import requests
-    import os.path
     print(f"Downloading {url} ...")
     r = requests.get(url)
     with open(lang_filename, "xb") as f:
         f.write(r.content)
-    if not os.path.isfile(lang_filename):
-        print(f"could not create '{lang_filename}'.",
-              f"Please download it manually from {url}.")
-        return False
     return True
 
 
@@ -90,8 +85,7 @@ def generate_word_list(
         if not url:
             print(f"Found no source URL for {language} word list.")
             return False
-        if not load_word_list_from_url(language, url):
-            return False
+        load_word_list_from_url(language, url)   # raises OSError if it does not work
 
     # create a filtered list of n letter words:
 
@@ -372,8 +366,10 @@ def load_words(lang: str, length: int) -> list:
     filename = f"words_{lang.lower()}_{length}.txt"
     import os
     if not os.path.isfile(filename):
-        if not generate_word_list(lang, length):
-            print("Could not generate word list file.")
+        try:
+            generate_word_list(lang, length)
+        except OSError as e:
+            print(f"Could not generate word list file: {e}.")
             return []
 
     words = []
